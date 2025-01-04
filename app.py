@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 import os
@@ -6,11 +6,9 @@ import atexit
 
 app = Flask(__name__)
 
-# Get configuration from environment variables with defaults
-TARGET_URL = os.environ.get(
-    "TARGET_URL", "https://tag-internlink-v2.onrender.com/api/health"
-)
-PING_INTERVAL = int(os.environ.get("PING_INTERVAL", 60))
+# Target URL is hardcoded for this specific use case
+TARGET_URL = "https://tag-internlink-v2.onrender.com/api/health"
+PING_INTERVAL = int(os.environ.get("PING_INTERVAL", 60))  # defaults to 60 seconds
 
 
 def ping_target():
@@ -32,12 +30,18 @@ atexit.register(lambda: scheduler.shutdown())
 
 @app.route("/")
 def home():
-    return {"status": "Pinger is running", "target": TARGET_URL}
+    return jsonify(
+        {
+            "status": "Pinger is running",
+            "target": TARGET_URL,
+            "ping_interval": f"Every {PING_INTERVAL} seconds",
+        }
+    )
 
 
 @app.route("/health")
 def health():
-    return {"status": "healthy"}
+    return jsonify({"status": "healthy"})
 
 
 if __name__ == "__main__":
