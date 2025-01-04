@@ -7,7 +7,9 @@ import atexit
 app = Flask(__name__)
 
 # Get configuration from environment variables with defaults
-TARGET_URL = os.environ.get("TARGET_URL", "http://example.com/ping")
+TARGET_URL = os.environ.get(
+    "TARGET_URL", "https://tag-internlink-v2.onrender.com/api/health"
+)
 PING_INTERVAL = int(os.environ.get("PING_INTERVAL", 60))
 
 
